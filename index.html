@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DHAs Nguyễn Kiệm - Điện tử chính hãng</title>
+  <style>
+    /* Màu sắc chủ đạo */
+    :root {
+      --black: #000000;
+      --yellow: #FFD700;
+      --green: #32CD32;
+      --blue: #1E90FF;
+      --purple: #800080;
+      --white: #FFFFFF;
+      --red: #FF0000;
+      --pink: #FF69B4;
+      --orange: #FFA500;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--black);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, var(--yellow), var(--green), var(--blue), var(--purple), var(--red), var(--pink), var(--orange));
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--black);
+      flex-wrap: wrap;
+    }
+    header .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header .logo img {
+      height: 40px;
+      width: 40px;
+      background: var(--white);
+      border-radius: 5px;
+      padding: 2px;
+    }
+    header .commitment {
+      font-style: italic;
+      flex-grow: 1;
+      margin-left: 20px;
+    }
+    header .cart-account {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--black);
+    }
+    header .cart-account > div {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    header .cart-account svg {
+      width: 24px;
+      height: 24px;
+    }
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      background-color: #111111;
+      color: var(--white);
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--black);
+    }
+    .products-table th,
+    .products-table td {
+      border: 1px solid var(--yellow);
+      padding: 10px;
+      text-align: left;
+    }
+    .products-table th {
+      background-color: var(--yellow);
+      color: var(--black);
+    }
+    .warranty-info {
+      background-color: var(--purple);
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    footer {
+      background-color: var(--blue);
+      color: var(--white);
+      padding: 15px 20px;
+      text-align: center;
+    }
+    /* Chatbot */
+    #chatbot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 320px;
+      max-height: 480px;
+      background-color: var(--black);
+      border: 2px solid var(--yellow);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 14px;
+      color: var(--white);
+      box-shadow: 0 0 10px var(--yellow);
+      z-index: 1000;
+    }
+    #chatbot-header {
+      background-color: var(--yellow);
+      color: var(--black);
+      padding: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+    #chatbot-messages {
+      flex-grow: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background-color: #222;
+    }
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 15px;
+      max-width: 80%;
+      clear: both;
+    }
+    .message.bot {
+      background-color: var(--green);
+      float: left;
+      color: var(--black);
+    }
+    .message.user {
+      background-color: var(--blue);
+      float: right;
+    }
+    #chatbot-input {
+      display: flex;
+      border-top: 1px solid var(--yellow);
+    }
+    #chatbot-input input {
+      flex-grow: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+      background-color: #111;
+      color: var(--white);
+    }
+    #chatbot-input button {
+      background-color: var(--yellow);
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--black);
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      header .commitment {
+        margin-left: 0;
+      }
+      #chatbot {
+        width: 90vw;
+        max-height: 60vh;
+        right: 5vw;
+        bottom: 5vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="https://via.placeholder.com/40x40?text=DH" alt="Logo DHAs Nguyễn Kiệm" />
+      DHAs Nguyễn Kiệm
+    </div>
+    <div class="commitment">Điện tử chính hãng - Giá tốt Nguyễn Kiệm</div>
+    <div class="cart-account">
+      <div id="cart">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M7 4h-2l-3 7v2h2l4 7h8v-2h-7l-1-2h9v-2h-9l-1-2h7v-2h-9l-1-2h7v-2h-9l-1-2h7v-2h-9l-1-2z"/></svg>
+        <span id="cart-count">0</span> sản phẩm - <span id="cart-total">0 VNĐ</span>
+      </div>
+      <div id="account">Đăng nhập/Đăng ký</div>
+      <div id="warranty-lookup">Tra cứu bảo hành</div>
+    </div>
+  </header>
+  <main>
+    <table class="products-table" aria-label="Danh sách sản phẩm">
+      <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Giá (VNĐ)</th>
+          <th>Thêm vào giỏ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Iphone 18 Pro Max</td><td>70,000,000</td><td><button onclick="addToCart('Iphone 18 Pro Max',70000000)">Thêm</button></td></tr>
+        <tr><td>Máy tính MacBook</td><td>105,000,000</td><td><button onclick="addToCart('Máy tính MacBook',105000000)">Thêm</button></td></tr>
+        <tr><td>Con chuột</td><td>5,000,000</td><td><button onclick="addToCart('Con chuột',5000000)">Thêm</button></td></tr>
+        <tr><td>Tai Nghe</td><td>3,000,000</td><td><button onclick="addToCart('Tai Nghe',3000000)">Thêm</button></td></tr>
+        <tr><td>Ipad</td><td>20,000,000</td><td><button onclick="addToCart('Ipad',20000000)">Thêm</button></td></tr>
+        <tr><td>Cục dự phòng</td><td>3,000,000</td><td><button onclick="addToCart('Cục dự phòng',3000000)">Thêm</button></td></tr>
+        <tr><td>Tivi</td><td>78,000,000</td><td><button onclick="addToCart('Tivi',7800000
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHAs Nguyễn Kiệm - Tư vấn khách hàng</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 480px;
+            height: 600px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #0052D4, #4364F7);
+            color: #ffffff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            color: #0052D4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .header-info p {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f9fafc;
+        }
+
+        .message {
+            max-width: 82%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-line;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            background-color: #ffffff;
+            color: #2c3e50;
+            align-self: flex-start;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .user-message {
+            background-color: #0052D4;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-input-area {
+            padding: 12px 16px;
+            background: #ffffff;
+            border-top: 1px solid #edf2f7;
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #4364F7;
+        }
+
+        .chat-input-area button {
+            background: #0052D4;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            background: #4364F7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="avatar">AI</div>
+        <div class="header-info">
+            <h3>DHAs Nguyễn Kiệm Agent</h3>
+            <p>Hỗ trợ & Tư vấn trực tuyến 24/7</p>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Nhập câu hỏi của bạn..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Gửi</button>
+    </div>
+</div>
+
+<script>
+// --- CƠ SỞ DỮ LIỆU CỦA CỬA HÀNG ---
+const STORE_INFO = {
+    name: "DHAs Nguyễn Kiệm",
+    address: "Nguyễn Kiệm, Phường Hạnh Thông, Thành phố Hồ Chí Minh",
+    hotline: "0123456789",
+    zalo: "0123456789",
+    messenger: "DHAs Nguyễn Kiệm",
+    products: [
+        { keywords: ["iphone 18", "iphone18", "18 pro max"], name: "iPhone 18 Pro Max", price: "70.000.000 VNĐ" },
+        { keywords: ["macbook", "máy tính macbook", "laptop macbook"], name: "Máy tính MacBook", price: "105.000.000 VNĐ" },
+        { keywords: ["chuột", "con chuột", "mouse"], name: "Con chuột", price: "5.000.000 VNĐ" },
+        { keywords: ["tai nghe", "headphone", "earphone"], name: "Tai nghe", price: "3.000.000 VNĐ" },
+        { keywords: ["ipad"], name: "iPad", price: "20.000.000 VNĐ" },
+        { keywords: ["sạc dự phòng", "c dự phòng", "pin dự phòng"], name: "Sạc dự phòng", price: "3.000.000 VNĐ" },
+        { keywords: ["tivi", "tv"], name: "Tivi", price: "78.000.000 VNĐ" },
+        { keywords: ["sạc bluetooth", "cục sạc bluetooth"], name: "Cục sạc Bluetooth", price: "7.000.000 VNĐ" }
+    ]
+};
+
+const CONTACT_FALLBACK = `Hiện tại em chưa có thông tin chi tiết về câu hỏi này. Anh/Chị vui lòng liên hệ trực tiếp với nhân viên qua các kênh sau để được hỗ trợ nhanh nhất ạ:
+📞 Hotline: ${STORE_INFO.hotline}
+💬 Zalo: ${STORE_INFO.zalo}
+🌐 Messenger: ${STORE_INFO.messenger}`;
+
+// --- BẮT ĐẦU CHÀO HỎI KHI TẢI TRANG ---
+window.onload = function() {
+    const welcomeMsg = `Xin chào Quý khách đến với cửa hàng ${STORE_INFO.name}! 👋
+Em là trợ lý AI chăm sóc khách hàng. Em có thể hỗ trợ Anh/Chị tra cứu giá sản phẩm, chính sách giao hàng, đổi trả và bảo hành.
+
+Địa chỉ cửa hàng: ${STORE_INFO.address}
+Hotline/Zalo: ${STORE_INFO.hotline}
+
+Anh/Chị cần em hỗ trợ thông tin gì ạ?`;
+    addMessage(welcomeMsg, 'bot');
+};
+
+function handleKeyPress(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+function sendMessage() {
+    const inputField = document.getElementById('userInput');
+    const query = inputField.value.trim();
+    if (!query) return;
+
+    addMessage(query, 'user');
+    inputField.value = '';
+
+    setTimeout(() => {
+        const response = processQuery(query);
+        addMessage(response, 'bot');
+    }, 300);
+}
+
+function addMessage(text, sender) {
+    const chatMessages = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+    msgDiv.innerText = text;
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// --- BỘ XỬ LÝ CÂU HỎI KỊCH BẢN (LOGIC BOT) ---
+function processQuery(text) {
+    const q = text.toLowerCase();
+
+    // 1. Hỏi về giá/sản phẩm cụ thể hoặc danh sách sản phẩm
+    let matchedProducts = STORE_INFO.products.filter(p => p.keywords.some(k => q.includes(k)));
+    if (matchedProducts.length > 0) {
+        let res = "Bảng giá sản phẩm Anh/Chị đang quan tâm tại DHAs Nguyễn Kiệm:\n";
+        matchedProducts.forEach(p => {
+            res += `- ${p.name}: ${p.price}\n`;
+        });
+        return res;
+    }
+
+    if (q.includes("bảng giá") || q.includes("danh sách sản phẩm") || q.includes("có những gì") || q.includes("bán gì") || q.includes("giá cả")) {
+        let res = "Danh sách sản phẩm và giá bán tại DHAs Nguyễn Kiệm:\n";
+        STORE_INFO.products.forEach(p => {
+            res += `- ${p.name}: ${p.price}\n`;
+        });
+        return res;
+    }
+
+    // 2. Phí Ship & Giao hàng
+    if (q.includes("ship") || q.includes("giao hàng") || q.includes("vận chuyển") || q.includes("phí giao")) {
+        if (q.includes("gò vấp")) {
+            return "Khu vực Quận Gò Vấp: Miễn phí giao hàng (Freeship)!";
+        }
+        if (q.includes("phú nhuận") || q.includes("bình thạnh") || q.includes("tân bình")) {
+            return "Khu vực Nội thành Gần (Phú Nhuận, Bình Thạnh, Tân Bình):\n- Phí ship: 15.000 VNĐ\n- Tốc độ giao hàng nhanh chóng từ 30 phút.";
+        }
+        if (q.includes("quận 1") || q.includes("quận 3") || q.includes("quận 4") || q.includes("quận 5") || q.includes("quận 10") || q.includes("quận 11")) {
+            return "Khu vực Nội thành Trung tâm (Quận 1, 3, 4, 5, 10, 11):\n- Phí ship: 25.000 VNĐ\n- Thời gian giao hàng: 1 – 2 tiếng hoặc theo giờ hẹn.";
+        }
+        if (q.includes("quận 6") || q.includes("quận 7") || q.includes("quận 8") || q.includes("quận 12") || q.includes("tân phú") || q.includes("bình tân") || q.includes("thủ đức") || q.includes("quận 2") || q.includes("quận 9")) {
+            return "Khu vực Ngoại thành & Quận xa (Quận 6, 7, 8, 12, Tân Phú, Bình Tân, TP. Thủ Đức):\n- Phí ship: 35.000 - 40.000 VNĐ\n- Giao hàng trong vòng 2 – 4 tiếng hoặc qua chuyển phát nhanh.";
+        }
+        if (q.includes("hóc môn") || q.includes("bình chánh") || q.includes("nhà bè")) {
+            return "Các huyện ngoại thành (Hóc Môn, Bình Chánh, Nhà Bè):\n- Phí ship đồng giá: 45.000 VNĐ.";
+        }
+
+        return `Thông tin Phí Ship & Giao Hàng tại DHAs Nguyễn Kiệm:
+• Quận Gò Vấp: Miễn phí (Freeship)
+• Nội thành Gần (Phú Nhuận, Bình Thạnh, Tân Bình): 15.000 VNĐ (từ 30 phút)
+• Nội thành Trung tâm (Q1, Q3, Q4, Q5, Q10, Q11): 25.000 VNĐ (1 - 2 tiếng)
+• Ngoại thành & Quận xa (Q6, Q7, Q8, Q12, Tân Phú, Bình Tân, TP. Thủ Đức): 35.000 - 40.000 VNĐ (2 - 4 tiếng)
+• Các huyện ngoại thành (Hóc Môn, Bình Chánh, Nhà Bè): Đồng giá 45.000 VNĐ
+
+  ƯU ĐÃI ĐẶC BIỆT:
+- Freeship toàn TP.HCM cho đơn Laptop, Máy tính để bàn (PC) hoặc Điện thoại từ 5.000.000 VNĐ trở lên.
+- Được đồng kiểm hàng, lên nguồn thử máy trước khi thanh toán!`;
+    }
+
+    // 3. Chính sách đổi trả / Hoàn tiền
+    if (q.includes("đổi trả") || q.includes("hoàn tiền") || q.includes("dùng thử") || q.includes("trả máy")) {
+        return `Chính sách Đổi trả (Hoàn tiền) – "An tâm dùng thử":
+
+1. Trong 7 ngày đầu tiên (Lỗi phần cứng từ NSX):
+- Đổi ngay máy mới cùng model (hoặc cùng giá trị) hoàn toàn miễn phí.
+- Nếu muốn hoàn tiền: Cửa hàng sẽ hoàn trả 100% giá trị hóa đơn.
+
+2. Từ ngày thứ 8 đến ngày thứ 30:
+- Lỗi phần cứng: Hỗ trợ đổi máy tương đương.
+- Trả máy/hoàn tiền: Thu phí 15% - 20% giá trị máy tùy tình trạng hao mòn thực tế.
+
+  Điều kiện áp dụng: Máy không bị trầy xước, móp méo, còn nguyên hộp (box), phụ kiện đi kèm và hóa đơn mua hàng.`;
+    }
+
+    // 4. Chính sách bảo hành
+    if (q.includes("bảo hành") || q.includes("lỗi") || q.includes("sửa")) {
+        return `Chính sách Bảo hành tiêu chuẩn:
+
+1. Thời hạn bảo hành:
+- Máy mới (Fullbox): 12 tháng - 24 tháng theo tiêu chuẩn hãng (Apple, Asus, Dell, Samsung...).
+- Máy đã qua sử dụng (99%): 06 tháng – 12 tháng trực tiếp tại DHAs Nguyễn Kiệm.
+- Phụ kiện, linh kiện lẻ: 03 tháng - 06 tháng.
+
+2. Phạm vi: Bảo hành toàn bộ lỗi phần cứng nhà sản xuất (nguồn, màn hình, mainboard, ổ cứng...).
+
+  Trường hợp từ chối bảo hành:
+- Dấu hiệu rơi rớt, móp méo, vào nước hoặc cháy nổ do sai nguồn điện.
+- Tự ý cạy mở, mất tem bảo hành DHAs Nguyễn Kiệm hoặc đã sửa chữa tại nơi khác.`;
+    }
+
+    // 5. Chính sách bảo dưỡng miễn phí
+    if (q.includes("bảo dưỡng") || q.includes("vệ sinh") || q.includes("tra keo") || q.includes("cài win") || q.includes("phần mềm")) {
+        return `Chính sách Bảo dưỡng miễn phí (Đặc quyền tại DHAs Nguyễn Kiệm):
+• Vệ sinh định kỳ: Miễn phí 100% hút bụi, lau chùi cánh quạt, làm sạch Laptop/PC mua tại cửa hàng (6 tháng/lần).
+• Tra keo tản nhiệt: Miễn phí keo tản nhiệt loại tốt (Cooler Master/Mx4) trong 2 năm đầu.
+• Hỗ trợ phần mềm trọn đời: Miễn phí cài đặt HĐH (Windows/macOS), driver, phần mềm văn phòng cơ bản, tối ưu hệ thống & dọn rác.`;
+    }
+
+    // 6. Địa chỉ, Liên hệ
+    if (q.includes("địa chỉ") || q.includes("ở đâu") || q.includes("hotline") || q.includes("zalo") || q.includes("liên hệ") || q.includes("messenger")) {
+        return `Thông tin liên hệ DHAs Nguyễn Kiệm:
+   Địa chỉ: ${STORE_INFO.address}
+   Hotline: ${STORE_INFO.hotline}
+   Zalo: ${STORE_INFO.zalo}
+   Messenger: ${STORE_INFO.messenger}`;
+    }
+
+    // 7. Chào hỏi lại
+    if (q.includes("xin chào") || q.includes("hello") || q.includes("hi") || q.includes("chào")) {
+        return `Dạ em chào Anh/Chị! Anh/Chị cần em tư vấn sản phẩm hay thông tin nào của DHAs Nguyễn Kiệm ạ?`;
+    }
+
+    // 8. Nếu không tìm thấy thông tin phù hợp -> Chuyển sang hotline/Zalo/Messenger
+    return CONTACT_FALLBACK;
+}
+</script>
+
+</body>
+</html>
+  
